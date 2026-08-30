@@ -69,8 +69,11 @@ gh repo create speech-translator --public --source=. --remote=origin --push
 1. In Vercel: **New Project**, import the `speech-translator` repo.
 2. Set **Root Directory** to `backend` (this is a monorepo — Vercel needs to know
    where the actual app lives).
-3. Vercel auto-detects the Python function in `backend/api/index.py` via
-   `backend/vercel.json`'s rewrite rule (every route forwards to that one function).
+3. Vercel auto-detects `backend/api/index.py` as a catch-all Python function
+   (it natively serves everything under `/api/*` to that one FastAPI app — no
+   custom rewrites needed; a `rewrites` rule that redirects to a fixed
+   destination actually breaks this, since it overwrites the real request
+   path instead of passing it through).
 4. Deploy. Copy the resulting URL, e.g. `https://speech-translator-api.vercel.app`.
 
 **Known limits of this setup** (inherent to serverless, not fixable by config):
