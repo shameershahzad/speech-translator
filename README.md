@@ -1,13 +1,13 @@
 # Speech Translator
 
 Real-time speech translation web app. Speak into your mic in any language, get the
-translated text and a spoken translation back — powered by Google's speech
+translated text and a spoken translation back powered by Google's speech
 recognition/translate and gTTS, served through a FastAPI backend to a React frontend.
 
 ## Stack
 
-- **Frontend**: React (Vite) — records mic audio via the browser `MediaRecorder` API
-- **Backend**: FastAPI — decodes audio (via `pydub`/ffmpeg), transcribes it
+- **Frontend**: React (Vite) records mic audio via the browser `MediaRecorder` API
+- **Backend**: FastAPI decodes audio (via `pydub`/ffmpeg), transcribes it
   (`speechrecognition` + Google), translates it (`deep-translator`), and synthesizes
   speech (`gTTS`)
 
@@ -63,7 +63,7 @@ is just a static build, so it's deployed separately.
    (e.g. `https://speech-translator-backend.onrender.com`).
 
 Render's free tier spins the service down after inactivity, so the first request
-after a while can take 30-60s to wake up — normal for a portfolio demo.
+after a while can take 30-60s to wake up normal for a portfolio demo.
 
 ### 2. Frontend → Vercel
 
@@ -72,7 +72,7 @@ after a while can take 30-60s to wake up — normal for a portfolio demo.
    where the actual app lives).
 3. Vercel auto-detects Vite; leave the build settings as-is.
 4. Add an environment variable: `VITE_API_URL` = the Render URL from step 1.
-5. Deploy. Vercel gives you an HTTPS URL — required for microphone access to work
+5. Deploy. Vercel gives you an HTTPS URL required for microphone access to work
    in the browser (only `localhost` and HTTPS origins are allowed to use
    `getUserMedia`).
 
