@@ -39,7 +39,7 @@ npm run dev
 ```
 
 Open the URL Vite prints (defaults to `http://localhost:5173`, this project runs on
-`5174` — see `.claude/launch.json`), pick a target language, tap the mic, and speak.
+`5174` see `.claude/launch.json`), pick a target language, tap the mic, and speak.
 Allow microphone access when your browser asks.
 
 If your frontend runs on a different port, add it to `allow_origins` in
