@@ -25,8 +25,12 @@ MIME_TYPE_TO_FORMAT_CODEC = {
 
 # recognize_google needs a full BCP-47 locale, not a bare language code -
 # without one it silently assumes en-US, which is why speech in any other
-# language (Urdu included) came back empty or garbled. Maps our language
-# picker's codes to a locale Google's speech API recognizes.
+# language came back empty, garbled, or transliterated into English. This
+# used to only cover ~65 of the 133 languages in the "Speak in" dropdown;
+# anything outside that set (e.g. Sindhi, Yoruba, Pashto, Somali) fell
+# through to the bare 2-letter code, which Google's speech API rejects -
+# so the bug wasn't Urdu-specific, it affected every unmapped language.
+# Covers every code the language picker offers.
 SPEECH_RECOGNITION_LOCALES = {
     "en": "en-US", "ur": "ur-PK", "hi": "hi-IN", "ar": "ar-SA", "es": "es-ES",
     "fr": "fr-FR", "de": "de-DE", "it": "it-IT", "pt": "pt-PT", "ru": "ru-RU",
@@ -42,6 +46,20 @@ SPEECH_RECOGNITION_LOCALES = {
     "ne": "ne-NP", "si": "si-LK", "mn": "mn-MN", "kk": "kk-KZ", "uz": "uz-UZ",
     "az": "az-AZ", "ka": "ka-GE", "hy": "hy-AM", "sq": "sq-AL", "mk": "mk-MK",
     "bs": "bs-BA", "zu": "zu-ZA",
+    "ak": "ak-GH", "as": "as-IN", "ay": "ay-BO", "be": "be-BY", "bho": "hi-IN",
+    "bm": "fr-ML", "ca": "ca-ES", "ceb": "fil-PH", "ckb": "ar-IQ", "co": "fr-FR",
+    "doi": "hi-IN", "dv": "dv-MV", "ee": "ee-GH", "eo": "eo", "eu": "eu-ES",
+    "fy": "fy-NL", "gd": "gd-GB", "gl": "gl-ES", "gn": "gn-PY", "gom": "hi-IN",
+    "ha": "ha-NG", "haw": "haw-US", "hmn": "hmn", "ht": "fr-HT", "ig": "ig-NG",
+    "ilo": "fil-PH", "jw": "jv-ID", "kri": "en-SL", "ku": "ku-TR", "ky": "ky-KG",
+    "la": "la", "lb": "lb-LU", "lg": "lg-UG", "ln": "ln-CD", "lo": "lo-LA",
+    "lus": "hi-IN", "mai": "hi-IN", "mg": "mg-MG", "mi": "mi-NZ", "mni-Mtei": "hi-IN",
+    "mt": "mt-MT", "my": "my-MM", "nso": "en-ZA", "ny": "en-MW", "om": "om-ET",
+    "or": "or-IN", "ps": "ps-AF", "qu": "qu-PE", "rw": "rw-RW", "sa": "sa-IN",
+    "sd": "sd-PK", "sm": "sm-WS", "sn": "sn-ZW", "so": "so-SO", "st": "en-ZA",
+    "su": "su-ID", "tg": "tg-TJ", "ti": "ti-ET", "tk": "tk-TM", "tl": "fil-PH",
+    "ts": "en-ZA", "tt": "tt-RU", "ug": "ug-CN", "xh": "xh-ZA", "yi": "yi",
+    "yo": "yo-NG",
 }
 
 
