@@ -6,6 +6,7 @@ import { fetchLanguages, speechToText, textToSpeechUrl, translateText } from "./
 import "./App.css";
 
 const DEFAULT_LANGUAGE = { code: "fr", name: "French" };
+const DEFAULT_SOURCE_LANGUAGE = { code: "en", name: "English" };
 
 // The backend decodes audio with an explicit codec (no ffprobe available on
 // serverless hosts), so it needs to know exactly what the browser recorded.
@@ -26,6 +27,7 @@ function pickSupportedMimeType() {
 export default function App() {
   const [languages, setLanguages] = useState([DEFAULT_LANGUAGE]);
   const [targetLang, setTargetLang] = useState(DEFAULT_LANGUAGE.code);
+  const [sourceLang, setSourceLang] = useState(DEFAULT_SOURCE_LANGUAGE.code);
   const [status, setStatus] = useState("idle"); // idle | recording | processing
   const [sourceText, setSourceText] = useState("");
   const [translatedText, setTranslatedText] = useState("");
@@ -92,7 +94,7 @@ export default function App() {
     const mimeType = mediaRecorderRef.current?.mimeType || "audio/webm";
     const blob = new Blob(chunksRef.current, { type: mimeType });
     try {
-      const heard = await speechToText(blob, mimeType);
+      const heard = await speechToText(blob, mimeType, sourceLang);
       setSourceText(heard);
       const translated = await translateText(heard, targetLang);
       setTranslatedText(translated);
@@ -137,12 +139,22 @@ export default function App() {
       </header>
 
       <main className="app__card">
-        <LanguageSelector
-          languages={languages}
-          value={targetLang}
-          onChange={setTargetLang}
-          disabled={status !== "idle"}
-        />
+        <div className="app__language-row">
+          <LanguageSelector
+            label="Speak in"
+            languages={languages}
+            value={sourceLang}
+            onChange={setSourceLang}
+            disabled={status !== "idle"}
+          />
+          <LanguageSelector
+            label="Translate into"
+            languages={languages}
+            value={targetLang}
+            onChange={setTargetLang}
+            disabled={status !== "idle"}
+          />
+        </div>
 
         <RecordButton status={status} onClick={handleMicClick} elapsedSeconds={elapsedSeconds} />
 

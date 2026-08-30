@@ -15,10 +15,11 @@ export async function fetchLanguages() {
   return response.json();
 }
 
-export async function speechToText(audioBlob, mimeType) {
+export async function speechToText(audioBlob, mimeType, language) {
   const formData = new FormData();
   formData.append("audio", audioBlob, "speech");
   if (mimeType) formData.append("mime_type", mimeType);
+  if (language) formData.append("language", language);
   const response = await fetch(`${API_URL}/api/speech-to-text`, {
     method: "POST",
     body: formData,

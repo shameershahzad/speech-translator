@@ -23,6 +23,33 @@ MIME_TYPE_TO_FORMAT_CODEC = {
     "audio/x-wav": ("wav", None),
 }
 
+# recognize_google needs a full BCP-47 locale, not a bare language code -
+# without one it silently assumes en-US, which is why speech in any other
+# language (Urdu included) came back empty or garbled. Maps our language
+# picker's codes to a locale Google's speech API recognizes.
+SPEECH_RECOGNITION_LOCALES = {
+    "en": "en-US", "ur": "ur-PK", "hi": "hi-IN", "ar": "ar-SA", "es": "es-ES",
+    "fr": "fr-FR", "de": "de-DE", "it": "it-IT", "pt": "pt-PT", "ru": "ru-RU",
+    "zh-CN": "zh-CN", "zh-TW": "zh-TW", "ja": "ja-JP", "ko": "ko-KR", "tr": "tr-TR",
+    "bn": "bn-BD", "ta": "ta-IN", "te": "te-IN", "ml": "ml-IN", "mr": "mr-IN",
+    "gu": "gu-IN", "kn": "kn-IN", "pa": "pa-IN", "th": "th-TH", "vi": "vi-VN",
+    "id": "id-ID", "ms": "ms-MY", "nl": "nl-NL", "pl": "pl-PL", "uk": "uk-UA",
+    "el": "el-GR", "iw": "iw-IL", "fa": "fa-IR", "sw": "sw-KE", "am": "am-ET",
+    "af": "af-ZA", "sv": "sv-SE", "no": "nb-NO", "da": "da-DK", "fi": "fi-FI",
+    "cs": "cs-CZ", "sk": "sk-SK", "ro": "ro-RO", "hu": "hu-HU", "bg": "bg-BG",
+    "hr": "hr-HR", "sr": "sr-RS", "sl": "sl-SI", "lt": "lt-LT", "lv": "lv-LV",
+    "et": "et-EE", "is": "is-IS", "ga": "ga-IE", "cy": "cy-GB", "km": "km-KH",
+    "ne": "ne-NP", "si": "si-LK", "mn": "mn-MN", "kk": "kk-KZ", "uz": "uz-UZ",
+    "az": "az-AZ", "ka": "ka-GE", "hy": "hy-AM", "sq": "sq-AL", "mk": "mk-MK",
+    "bs": "bs-BA", "zu": "zu-ZA",
+}
+
+
+def _resolve_locale(language: Optional[str]) -> Optional[str]:
+    if not language:
+        return None
+    return SPEECH_RECOGNITION_LOCALES.get(language, language)
+
 
 def _resolve_format_and_codec(mime_type: Optional[str]):
     if not mime_type:
@@ -39,7 +66,7 @@ class SpeechService:
     def __init__(self):
         self.recognizer = sr.Recognizer()
 
-    def speech_to_text(self, audio_bytes: bytes, mime_type: Optional[str] = None) -> str:
+    def speech_to_text(self, audio_bytes: bytes, mime_type: Optional[str] = None, language: Optional[str] = None) -> str:
         """Decode browser-recorded audio (via the bundled ffmpeg binary) and transcribe it."""
         audio_format, codec = _resolve_format_and_codec(mime_type)
         try:
@@ -64,7 +91,7 @@ class SpeechService:
             audio = self.recognizer.record(source)
 
         try:
-            return self.recognizer.recognize_google(audio)
+            return self.recognizer.recognize_google(audio, language=_resolve_locale(language) or "en-US")
         except sr.UnknownValueError:
             raise SpeechRecognitionError("Could not understand the audio")
         except sr.RequestError as exc:
