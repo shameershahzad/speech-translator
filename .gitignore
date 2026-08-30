@@ -6,3 +6,5 @@ speech_assistant_config.json
 
 node_modules/
 dist/
+
+.claude/
