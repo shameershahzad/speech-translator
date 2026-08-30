@@ -1,7 +1,7 @@
 import logging
 import os
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from pydantic import BaseModel
@@ -101,3 +101,16 @@ def text_to_speech(text: str, lang: str = "en"):
 @app.get("/api/health")
 def health():
     return {"status": "ok"}
+
+
+# TEMPORARY diagnostic route - shows what path Vercel's rewrite actually
+# delivers to this function, to debug routing. Remove once confirmed working.
+@app.api_route("/{full_path:path}", methods=["GET", "POST"])
+async def debug_catch_all(full_path: str, request: Request):
+    return {
+        "note": "diagnostic catch-all - no route matched this request",
+        "full_path_param": full_path,
+        "request_url_path": request.url.path,
+        "scope_path": request.scope.get("path"),
+        "scope_raw_path": request.scope.get("raw_path", b"").decode(errors="replace"),
+    }
