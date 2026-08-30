@@ -1,7 +1,7 @@
 import logging
 import os
 
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from pydantic import BaseModel
@@ -70,13 +70,13 @@ def translate(payload: TranslateRequest):
 
 
 @app.post("/api/speech-to-text", response_model=SpeechToTextResponse)
-async def speech_to_text(audio: UploadFile = File(...)):
+async def speech_to_text(audio: UploadFile = File(...), mime_type: str = Form(None)):
     audio_bytes = await audio.read()
     if not audio_bytes:
         raise HTTPException(status_code=400, detail="Empty audio upload")
 
     try:
-        text = speech_service.speech_to_text(audio_bytes)
+        text = speech_service.speech_to_text(audio_bytes, mime_type)
     except SpeechRecognitionError as exc:
         logger.warning("Speech recognition failed: %s", exc)
         raise HTTPException(status_code=422, detail=str(exc)) from exc

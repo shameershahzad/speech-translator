@@ -7,6 +7,22 @@ import "./App.css";
 
 const DEFAULT_LANGUAGE = { code: "fr", name: "French" };
 
+// The backend decodes audio with an explicit codec (no ffprobe available on
+// serverless hosts), so it needs to know exactly what the browser recorded.
+// Preference order matters: Chrome/Firefox/Edge support webm/opus, Safari
+// only supports mp4/aac.
+const PREFERRED_MIME_TYPES = [
+  "audio/webm;codecs=opus",
+  "audio/webm",
+  "audio/mp4",
+  "audio/ogg;codecs=opus",
+];
+
+function pickSupportedMimeType() {
+  if (typeof MediaRecorder === "undefined" || !MediaRecorder.isTypeSupported) return undefined;
+  return PREFERRED_MIME_TYPES.find((type) => MediaRecorder.isTypeSupported(type));
+}
+
 export default function App() {
   const [languages, setLanguages] = useState([DEFAULT_LANGUAGE]);
   const [targetLang, setTargetLang] = useState(DEFAULT_LANGUAGE.code);
@@ -47,7 +63,7 @@ export default function App() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
-      const recorder = new MediaRecorder(stream);
+      const recorder = new MediaRecorder(stream, { mimeType: pickSupportedMimeType() });
       chunksRef.current = [];
 
       recorder.ondataavailable = (event) => {
@@ -73,9 +89,10 @@ export default function App() {
   };
 
   const handleRecordingStop = async () => {
-    const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+    const mimeType = mediaRecorderRef.current?.mimeType || "audio/webm";
+    const blob = new Blob(chunksRef.current, { type: mimeType });
     try {
-      const heard = await speechToText(blob);
+      const heard = await speechToText(blob, mimeType);
       setSourceText(heard);
       const translated = await translateText(heard, targetLang);
       setTranslatedText(translated);
