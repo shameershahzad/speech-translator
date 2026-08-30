@@ -1,7 +1,7 @@
-export default function LanguageSelector({ languages, value, onChange, disabled }) {
+export default function LanguageSelector({ languages, value, onChange, disabled, label = "Translate into" }) {
   return (
     <label className="language-selector">
-      <span className="language-selector__label">Translate into</span>
+      <span className="language-selector__label">{label}</span>
       <select
         className="language-selector__select"
         value={value}
