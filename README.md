@@ -57,7 +57,7 @@ is just a static build, so it's deployed separately.
 1. Push this repo to GitHub (see below).
 2. In Render: **New → Blueprint**, point it at this repo. It'll pick up
    [`render.yaml`](render.yaml) automatically, which builds `backend/Dockerfile`
-   (installs `ffmpeg` — Render's native Python runtime doesn't include it, hence
+   (installs `ffmpeg` Render's native Python runtime doesn't include it, hence
    Docker) and deploys it as a free web service.
 3. Once deployed, copy the service URL Render gives you
    (e.g. `https://speech-translator-backend.onrender.com`).
@@ -68,7 +68,7 @@ after a while can take 30-60s to wake up normal for a portfolio demo.
 ### 2. Frontend → Vercel
 
 1. In Vercel: **New Project**, import the same GitHub repo.
-2. Set **Root Directory** to `frontend` (this is a monorepo — Vercel needs to know
+2. Set **Root Directory** to `frontend` (this is a monorepo Vercel needs to know
    where the actual app lives).
 3. Vercel auto-detects Vite; leave the build settings as-is.
 4. Add an environment variable: `VITE_API_URL` = the Render URL from step 1.
